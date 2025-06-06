@@ -64,13 +64,14 @@ labels: {}
 # and VELERO_ROLE_NAME filled in:
 podAnnotations:
   # azure.workload.identity/inject-proxy-sidecar: "true"
-  azure.workload.identity/use: "true"
+  azure.workload.identity/use: "true" # Essential for Azure workload identity
 
   #  iam.amazonaws.com/role: "arn:aws:iam::<AWS_ACCOUNT_ID>:role/<VELERO_ROLE_NAME>"
 
 # Additional pod labels for Velero deployment's template. Optional
 # ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
+podLabels:
+  azure.workload.identity/use: "true" # Essential for Azure workload identity
 
 # Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
 # revisionHistoryLimit: 1
@@ -141,7 +142,7 @@ initContainers:
 # Set fsGroup for `AWS IAM Roles for Service Accounts`
 # see more informations at: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
 podSecurityContext:
-  fsGroup: 1337
+  fsGroup: 1337 # Essential for Azure workload identity
 
 # Container Level Security Context for the 'velero' container of the Velero deployment. Optional.
 # See: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -503,6 +504,7 @@ configuration:
   extraArgs: []
 
   # Additional values to be used as environment variables. Optional.
+  # Essential for Azure workload identity
   extraEnvVars:
     - name: AZURE_CLIENT_ID
       value: "7cdd79ed-1e16-4f63-9e16-0bfba0d54cd5"
@@ -548,8 +550,8 @@ serviceAccount:
     create: true
     name:
     annotations:
-      azure.workload.identity/client-id: 7cdd79ed-1e16-4f63-9e16-0bfba0d54cd5
-      azure.workload.identity.tenant-id: afadec18-0533-4cba-8578-5316252ff93f
+      azure.workload.identity/client-id: 7cdd79ed-1e16-4f63-9e16-0bfba0d54cd5 # Essential for Azure workload identity
+      azure.workload.identity.tenant-id: afadec18-0533-4cba-8578-5316252ff93f # Essential for Azure workload identity
     labels:
     imagePullSecrets: []
     # - registrySecretName
@@ -671,7 +673,7 @@ nodeAgent:
   # see more informations at: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
   podSecurityContext:
     runAsUser: 0
-    fsGroup: 1337
+    fsGroup: 1337 # Essential for Azure workload identity
 
   # Container Level Security Context for the 'node-agent' container of the node-agent daemonset. Optional.
   # See: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
